@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<menu-config xmlns="http://schemas.haulmont.com/cuba/menu.xsd">
+    <menu id="application-libfieldsample"
+          insertBefore="administration">
+        <item screen="libfieldsample$LibEntity.browse"/>
+        <item screen="libfieldsample$ValueHolder.browse"/>
+    </menu>
+</menu-config>

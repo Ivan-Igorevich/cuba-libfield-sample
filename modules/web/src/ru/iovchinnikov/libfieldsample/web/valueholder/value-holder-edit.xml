@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="msg://editorCaption"
+        class="ru.iovchinnikov.libfieldsample.web.valueholder.ValueHolderEdit"
+        datasource="valueHolderDs"
+        focusComponent="fieldGroup"
+        messagesPack="ru.iovchinnikov.libfieldsample.web.valueholder">
+    <dsContext>
+        <datasource id="valueHolderDs"
+                    class="ru.iovchinnikov.libfieldsample.entity.ValueHolder"
+                    view="valueHolder-view"/>
+        <collectionDatasource id="libEntitiesDs"
+                              class="ru.iovchinnikov.libfieldsample.entity.LibEntity"
+                              view="libEntity-view">
+            <query>
+                <![CDATA[select e from libfieldsample$LibEntity e]]>
+            </query>
+        </collectionDatasource>
+    </dsContext>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="windowActions"
+            spacing="true">
+        <fieldGroup id="fieldGroup"
+                    datasource="valueHolderDs">
+            <column width="250px">
+                <field property="name"/>
+                <field property="libValue"
+                       custom="true"
+                       generator="fieldGen" />
+            </column>
+        </fieldGroup>
+        <frame id="windowActions"
+               screen="editWindowActions"/>
+    </layout>
+</window>

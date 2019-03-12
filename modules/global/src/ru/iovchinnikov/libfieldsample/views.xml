@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<views xmlns="http://schemas.haulmont.com/cuba/view.xsd">
+    <view class="ru.iovchinnikov.libfieldsample.entity.LibEntity"
+          extends="_local"
+          name="libEntity-view"/>
+    <view class="ru.iovchinnikov.libfieldsample.entity.ValueHolder"
+          extends="_local"
+          name="valueHolder-view"/>
+</views>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+             version="2.0">
+    <persistence-unit name="lib-field-sample"
+                      transaction-type="RESOURCE_LOCAL">
+        <class>ru.iovchinnikov.libfieldsample.entity.LibEntity</class>
+        <class>ru.iovchinnikov.libfieldsample.entity.ValueHolder</class>
+    </persistence-unit>
+</persistence>

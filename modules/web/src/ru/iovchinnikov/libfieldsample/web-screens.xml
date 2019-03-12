@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<screen-config xmlns="http://schemas.haulmont.com/cuba/screens.xsd">
+    <screen id="libfieldsample$LibEntity.browse"
+            template="ru/iovchinnikov/libfieldsample/web/libentity/lib-entity-browse.xml"/>
+    <screen id="libfieldsample$LibEntity.edit"
+            template="ru/iovchinnikov/libfieldsample/web/libentity/lib-entity-edit.xml"/>
+    <screen id="libfieldsample$ValueHolder.browse"
+            template="ru/iovchinnikov/libfieldsample/web/valueholder/value-holder-browse.xml"/>
+    <screen id="libfieldsample$ValueHolder.edit"
+            template="ru/iovchinnikov/libfieldsample/web/valueholder/value-holder-edit.xml"/>
+</screen-config>

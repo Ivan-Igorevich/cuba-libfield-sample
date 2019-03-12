@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="msg://browseCaption"
+        class="ru.iovchinnikov.libfieldsample.web.valueholder.ValueHolderBrowse"
+        focusComponent="valueHoldersTable"
+        lookupComponent="valueHoldersTable"
+        messagesPack="ru.iovchinnikov.libfieldsample.web.valueholder">
+    <dsContext>
+        <groupDatasource id="valueHoldersDs"
+                         class="ru.iovchinnikov.libfieldsample.entity.ValueHolder"
+                         view="valueHolder-view">
+            <query>
+                <![CDATA[select e from libfieldsample$ValueHolder e]]>
+            </query>
+        </groupDatasource>
+    </dsContext>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="valueHoldersTable"
+            spacing="true">
+        <filter id="filter"
+                applyTo="valueHoldersTable"
+                datasource="valueHoldersDs">
+            <properties include=".*"/>
+        </filter>
+        <groupTable id="valueHoldersTable"
+                    width="100%">
+            <actions>
+                <action id="create"/>
+                <action id="edit"/>
+                <action id="remove"/>
+            </actions>
+            <columns>
+                <column id="name"/>
+                <column id="libValue"/>
+            </columns>
+            <rows datasource="valueHoldersDs"/>
+            <rowsCount/>
+            <buttonsPanel id="buttonsPanel"
+                          alwaysVisible="true">
+                <button id="createBtn"
+                        action="valueHoldersTable.create"/>
+                <button id="editBtn"
+                        action="valueHoldersTable.edit"/>
+                <button id="removeBtn"
+                        action="valueHoldersTable.remove"/>
+            </buttonsPanel>
+        </groupTable>
+    </layout>
+</window>
