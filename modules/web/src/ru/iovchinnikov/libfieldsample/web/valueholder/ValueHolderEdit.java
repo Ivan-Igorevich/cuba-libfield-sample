@@ -1,5 +1,6 @@
 package ru.iovchinnikov.libfieldsample.web.valueholder;
 
+import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.WindowManager;
 import com.haulmont.cuba.gui.components.*;
@@ -21,6 +22,8 @@ public class ValueHolderEdit extends AbstractEditor<ValueHolder> {
     @Inject private CollectionDatasource<LibEntity, UUID> libEntitiesDs;
     @Inject private Datasource<ValueHolder> valueHolderDs;
     @Inject private Metadata metadata;
+    @Inject private DataManager dataManager;
+    @Named("fieldGroup.libValue") private Field libValueField;
 
     public Component fieldGen(Datasource datasource, String fieldId) {
         LookupField field = componentsFactory.createComponent(LookupField.class);
@@ -34,11 +37,10 @@ public class ValueHolderEdit extends AbstractEditor<ValueHolder> {
         field.setNewOptionHandler(caption -> {
             LibEntity e = metadata.create(LibEntity.class);
             e.setName(caption);
-            AbstractEditor ae = openEditor(e, WindowManager.OpenType.DIALOG);
-            ae.addCloseWithCommitListener(() -> {
-                field.setValue(e.getName());
-            });
+            dataManager.commit(e);
+            field.setValue(e.getName());
         });
+
         return field;
     }
 }

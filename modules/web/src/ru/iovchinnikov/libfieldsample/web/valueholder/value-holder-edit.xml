@@ -24,8 +24,10 @@
         <fieldGroup id="fieldGroup"
                     datasource="valueHolderDs">
             <column width="250px">
-                <field property="name"/>
-                <field property="libValue"
+                <field id="name"
+                       property="name"/>
+                <field id="libValue"
+                       property="libValue"
                        custom="true"
                        generator="fieldGen" />
             </column>
