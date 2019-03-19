@@ -4,5 +4,6 @@
           insertBefore="administration">
         <item screen="libfieldsample$LibEntity.browse"/>
         <item screen="libfieldsample$ValueHolder.browse"/>
+        <item screen="libfieldsample$Settings.browse"/>
     </menu>
 </menu-config>

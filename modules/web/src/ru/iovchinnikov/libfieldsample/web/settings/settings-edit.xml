@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="msg://editorCaption"
+        class="ru.iovchinnikov.libfieldsample.web.settings.SettingsEdit"
+        datasource="settingsDs"
+        focusComponent="fieldGroup"
+        messagesPack="ru.iovchinnikov.libfieldsample.web.settings">
+    <dsContext>
+        <datasource id="settingsDs"
+                    class="ru.iovchinnikov.libfieldsample.entity.Settings"
+                    view="settings-view">
+            <collectionDatasource id="possibleDs"
+                                  property="possible"/>
+        </datasource>
+        <collectionDatasource id="holdersDs"
+                              class="ru.iovchinnikov.libfieldsample.entity.ValueHolder"
+                              view="valueHolder-view">
+            <query>
+                <![CDATA[select e from libfieldsample$ValueHolder e]]>
+            </query>
+        </collectionDatasource>
+    </dsContext>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="windowActions"
+            spacing="true">
+        <fieldGroup id="fieldGroup"
+                    datasource="settingsDs">
+            <column width="250px">
+                <field property="entity" 
+                       custom="true" 
+                       generator="entityGen"/>
+            </column>
+        </fieldGroup>
+        <groupBox id="possibleBox"
+                  caption="msg://ru.iovchinnikov.libfieldsample.entity/Settings.possible">
+            <table id="possibleTable"
+                   height="200px"
+                   width="100%">
+                <actions>
+                    <action id="add"/>
+                    <action id="remove"/>
+                </actions>
+                <columns>
+                    <column id="name"/>
+                </columns>
+                <rows datasource="possibleDs"/>
+                <buttonsPanel>
+                    <button action="possibleTable.add"/>
+                    <button action="possibleTable.remove"/>
+                </buttonsPanel>
+            </table>
+        </groupBox>
+        <frame id="windowActions"
+               screen="editWindowActions"/>
+    </layout>
+</window>

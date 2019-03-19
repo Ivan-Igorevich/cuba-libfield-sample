@@ -13,7 +13,9 @@
                               class="ru.iovchinnikov.libfieldsample.entity.LibEntity"
                               view="libEntity-view">
             <query>
-                <![CDATA[select e from libfieldsample$LibEntity e]]>
+                <![CDATA[select p from libfieldsample$Settings s
+                            join s.possible p
+                            where s.entity = :custom$id]]>
             </query>
         </collectionDatasource>
     </dsContext>

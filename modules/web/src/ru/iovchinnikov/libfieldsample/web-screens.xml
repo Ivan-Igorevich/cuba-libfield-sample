@@ -8,4 +8,8 @@
             template="ru/iovchinnikov/libfieldsample/web/valueholder/value-holder-browse.xml"/>
     <screen id="libfieldsample$ValueHolder.edit"
             template="ru/iovchinnikov/libfieldsample/web/valueholder/value-holder-edit.xml"/>
+    <screen id="libfieldsample$Settings.browse"
+            template="ru/iovchinnikov/libfieldsample/web/settings/settings-browse.xml"/>
+    <screen id="libfieldsample$Settings.edit"
+            template="ru/iovchinnikov/libfieldsample/web/settings/settings-edit.xml"/>
 </screen-config>

@@ -6,4 +6,10 @@
     <view class="ru.iovchinnikov.libfieldsample.entity.ValueHolder"
           extends="_local"
           name="valueHolder-view"/>
+    <view class="ru.iovchinnikov.libfieldsample.entity.Settings"
+          extends="_local"
+          name="settings-view">
+        <property name="possible"
+                  view="_minimal"/>
+    </view>
 </views>

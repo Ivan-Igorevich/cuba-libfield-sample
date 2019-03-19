@@ -1,5 +1,6 @@
 package ru.iovchinnikov.libfieldsample.web.valueholder;
 
+import com.haulmont.bali.util.ParamsMap;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.Metadata;
 import com.haulmont.cuba.gui.WindowManager;
@@ -23,15 +24,13 @@ public class ValueHolderEdit extends AbstractEditor<ValueHolder> {
     @Inject private Datasource<ValueHolder> valueHolderDs;
     @Inject private Metadata metadata;
     @Inject private DataManager dataManager;
-    @Named("fieldGroup.libValue") private Field libValueField;
+
+    private LookupField field;
 
     public Component fieldGen(Datasource datasource, String fieldId) {
-        LookupField field = componentsFactory.createComponent(LookupField.class);
+        field = componentsFactory.createComponent(LookupField.class);
         field.setDatasource(valueHolderDs, "libValue");
-        libEntitiesDs.refresh();
-        Map<String, String> map = new LinkedHashMap<>();
-        libEntitiesDs.getItems().forEach(libEntity -> map.put(libEntity.getName(), libEntity.getName()));
-        field.setOptionsMap(map);
+
         field.setNullOptionVisible(false);
         field.setNewOptionAllowed(true);
         field.setNewOptionHandler(caption -> {
@@ -42,5 +41,15 @@ public class ValueHolderEdit extends AbstractEditor<ValueHolder> {
         });
 
         return field;
+    }
+
+    @Override
+    public void ready() {
+        super.ready();
+        valueHolderDs.refresh();
+        libEntitiesDs.refresh(ParamsMap.of("id", valueHolderDs.getItem().getName()));
+        Map<String, String> map = new LinkedHashMap<>();
+        libEntitiesDs.getItems().forEach(libEntity -> map.put(libEntity.getName(), libEntity.getName()));
+        field.setOptionsMap(map);
     }
 }
