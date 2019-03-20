@@ -15,7 +15,7 @@
             <query>
                 <![CDATA[select p from libfieldsample$Settings s
                             join s.possible p
-                            where s.entity = :custom$id]]>
+                            where s.entity = :custom$name]]>
             </query>
         </collectionDatasource>
     </dsContext>

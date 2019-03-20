@@ -16,7 +16,7 @@ import com.haulmont.chile.core.annotations.NamePattern;
 public class Settings extends StandardEntity {
     private static final long serialVersionUID = -4478155422709116363L;
 
-    @Column(name = "ENTITY")
+    @Column(name = "ENTITY", unique = true)
     protected String entity;
 
     @JoinTable(name = "LIBFIELDSAMPLE_SETTINGS_LIB_ENTITY_LINK",

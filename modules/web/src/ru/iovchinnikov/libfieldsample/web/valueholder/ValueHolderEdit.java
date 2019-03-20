@@ -30,15 +30,15 @@ public class ValueHolderEdit extends AbstractEditor<ValueHolder> {
     public Component fieldGen(Datasource datasource, String fieldId) {
         field = componentsFactory.createComponent(LookupField.class);
         field.setDatasource(valueHolderDs, "libValue");
-
         field.setNullOptionVisible(false);
-        field.setNewOptionAllowed(true);
-        field.setNewOptionHandler(caption -> {
-            LibEntity e = metadata.create(LibEntity.class);
-            e.setName(caption);
-            dataManager.commit(e);
-            field.setValue(e.getName());
-        });
+
+//        field.setNewOptionAllowed(true);
+//        field.setNewOptionHandler(caption -> {
+//            LibEntity e = metadata.create(LibEntity.class);
+//            e.setName(caption);
+//            dataManager.commit(e);
+//            field.setValue(e.getName());
+//        });
 
         return field;
     }
@@ -47,7 +47,7 @@ public class ValueHolderEdit extends AbstractEditor<ValueHolder> {
     public void ready() {
         super.ready();
         valueHolderDs.refresh();
-        libEntitiesDs.refresh(ParamsMap.of("id", valueHolderDs.getItem().getName()));
+        libEntitiesDs.refresh(ParamsMap.of("name", valueHolderDs.getItem().getName()));
         Map<String, String> map = new LinkedHashMap<>();
         libEntitiesDs.getItems().forEach(libEntity -> map.put(libEntity.getName(), libEntity.getName()));
         field.setOptionsMap(map);
