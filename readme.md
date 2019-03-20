@@ -18,63 +18,64 @@
 <summary>Пример одного из вариантов</summary>
 <p>
 Сценарий, максимально облегчающий жизнь пользователя предполагает, что пользователь заходит на экран редактирования основной сущности, внутри основного `fieldGroup` видит поле с выпадающим списком и может выбирать из него варианты. Но это становится неудобно, когда список строк, из которых необходимо сделать выбор становится слишком большой. В этом случае пользователь может начать ввод значения с клавиатуры и произойдёт фильтрация библиотечных значений по первым введённым буквам. Для того, чтобы добавить новое значение в библиотеку, обычно, предлагается зайти на экран со списком библиотечных объектов, и создать там новый, а затем, обновив источник данных основного экрана, продолжить редактирование. Такой подход не соответствует ожиданиям пользователя и требует от него больше действий, чем он ожидает, поэтому лучше будет применить сценарий, при котором пользователь начинает ввод значения, может выбрать из отфильтрованных в выпадающем списке, а в случае отсутствия - налету добавить введённое значение к библиотеке. В примере ниже приводится код, открывающий экран редактирования бибилиотечной сущности для ввода не только имени но и описания.
-<details>
-<summary>Дескриптор</summary>
-<p>
-В первую очередь подразумевается, что нужный компонент будет встроен в `fieldGroup`, поэтому в дескрипторе окна следует указать, что поле будет формироваться в контроллере
-```xml
-<fieldGroup id="fieldGroup"
-            datasource="valueHolderDs">
-    <!-- more options and fields here -->
-        <field property="libValue"
-               custom="true"
-               generator="fieldGen" />
-```
-Таким образом получаем указание описать в контроллере метод `public Component fieldGen(Datasource, String)`, который и сгенерирует требующийся компонент для данного поля. Компонент необходимо заполнить данными, чтобы в выпадающем списке содержались все библиотечные объекты. Особенность этого процесса в том, что источники данных обновляются во время выполнения метода `public void init(Map<String, Object>)`, а генерация полей формы происходит до этого, поэтому в источнике данных в нужный момент будет лежать пустота. В связи с чем следует обновить источник данных после указания его в качестве источника для поля, выполнив `libEntitiesDs.refresh()`. Далее следует добавить возможность создавать новые библиотечные объекты `field.setNewOptionAllowed(boolean)` и описать обработчик такого добавления `field.setNewOptionHandler(String -> {})`, где `String` - это введённые пользователем символы в строку выпадающего меню.
-</p>
-</details>
-<details>
-<summary>Контроллер</summary>
-<p>
-Внутри обработчика можно создавать новый библиотечный объект, открывать его для редактирования или сразу делать коммит в источник данных.
-``` java
-field.setNewOptionAllowed(true);
-field.setNewOptionHandler(caption -> {
-    LibEntity e = metadata.create(LibEntity.class);
-    e.setName(caption);
-    dataManager.commit(e);
-    field.setValue(e.getName());
-});
-```
-Ниже приведён полный листинг варианта, при котором открывается окно редактирования библиотечной сущности, а по закрытии и сохранении происходит установка вновь созданного значения в заголовок поля с выпадающим списком.
-``` java
-@Inject private ComponentsFactory componentsFactory;
-@Inject private CollectionDatasource<LibEntity, UUID> libEntitiesDs;
-@Inject private Datasource<ValueHolder> valueHolderDs;
-@Inject private Metadata metadata;
+  <details>
+  <summary>Дескриптор</summary>
+  <p>
+  В первую очередь подразумевается, что нужный компонент будет встроен в `fieldGroup`, поэтому в дескрипторе окна следует указать, что поле будет формироваться в контроллере
+  ```xml
+  <fieldGroup id="fieldGroup"
+              datasource="valueHolderDs">
+      <!-- more options and fields here -->
+          <field property="libValue"
+                 custom="true"
+                 generator="fieldGen" />
+  ```
+  Таким образом получаем указание описать в контроллере метод `public Component fieldGen(Datasource, String)`, который и сгенерирует требующийся компонент для данного поля. Компонент необходимо заполнить данными, чтобы в выпадающем списке содержались все библиотечные объекты. Особенность этого процесса в том, что источники данных обновляются во время выполнения метода `public void init(Map<String, Object>)`, а генерация полей формы происходит до этого, поэтому в источнике данных в нужный момент будет лежать пустота. В связи с чем следует обновить источник данных после указания его в качестве источника для поля, выполнив `libEntitiesDs.refresh()`. Далее следует добавить возможность создавать новые библиотечные объекты `field.setNewOptionAllowed(boolean)` и описать обработчик такого добавления `field.setNewOptionHandler(String -> {})`, где `String` - это введённые пользователем символы в строку выпадающего меню.
+  </p>
+  </details>
 
-public Component fieldGen(Datasource datasource, String fieldId) {
-    LookupField field = componentsFactory.createComponent(LookupField.class);
-    field.setDatasource(valueHolderDs, "libValue");
-    libEntitiesDs.refresh();
-    Map<String, String> map = new LinkedHashMap<>();
-    libEntitiesDs.getItems().forEach(libEntity -> map.put(libEntity.getName(), libEntity.getName()));
-    field.setOptionsMap(map);
-    field.setNullOptionVisible(false);
-    field.setNewOptionAllowed(true);
-    field.setNewOptionHandler(caption -> {
-        LibEntity e = metadata.create(LibEntity.class);
-        e.setName(caption);
-        AbstractEditor ae = openEditor(e, WindowManager.OpenType.DIALOG);
-        ae.addCloseWithCommitListener(() -> {
-            field.setValue(e.getName());
-        });
-    });
-    return field;
-}
-```
-</p>
-</details>
+  <details>
+  <summary>Контроллер</summary>
+  <p>
+  Внутри обработчика можно создавать новый библиотечный объект, открывать его для редактирования или сразу делать коммит в источник данных.
+  ``` java
+  field.setNewOptionAllowed(true);
+  field.setNewOptionHandler(caption -> {
+      LibEntity e = metadata.create(LibEntity.class);
+      e.setName(caption);
+      dataManager.commit(e);
+      field.setValue(e.getName());
+  });
+  ```
+  Ниже приведён полный листинг варианта, при котором открывается окно редактирования библиотечной сущности, а по закрытии и сохранении происходит установка вновь созданного значения в заголовок поля с выпадающим списком.
+  ``` java
+  @Inject private ComponentsFactory componentsFactory;
+  @Inject private CollectionDatasource<LibEntity, UUID> libEntitiesDs;
+  @Inject private Datasource<ValueHolder> valueHolderDs;
+  @Inject private Metadata metadata;
+
+  public Component fieldGen(Datasource datasource, String fieldId) {
+      LookupField field = componentsFactory.createComponent(LookupField.class);
+      field.setDatasource(valueHolderDs, "libValue");
+      libEntitiesDs.refresh();
+      Map<String, String> map = new LinkedHashMap<>();
+      libEntitiesDs.getItems().forEach(libEntity -> map.put(libEntity.getName(), libEntity.getName()));
+      field.setOptionsMap(map);
+      field.setNullOptionVisible(false);
+      field.setNewOptionAllowed(true);
+      field.setNewOptionHandler(caption -> {
+          LibEntity e = metadata.create(LibEntity.class);
+          e.setName(caption);
+          AbstractEditor ae = openEditor(e, WindowManager.OpenType.DIALOG);
+          ae.addCloseWithCommitListener(() -> {
+              field.setValue(e.getName());
+          });
+      });
+      return field;
+  }
+  ```
+  </p>
+  </details>
 </p>
 </details>
 
@@ -82,6 +83,18 @@ public Component fieldGen(Datasource datasource, String fieldId) {
 <details>
 <summary>Проблема</summary>
 <p>
-Зачастую существует необходимость в регламентировании содержимого выбора библиотечных сущностей внутри основной. То есть необходимость в выборе администратором тех библиотечных объектов, которые будут подходящими для конкретных объектов основной сущности. Для этого необходимо
+Зачастую существует необходимость в регламентировании содержимого выбора библиотечных сущностей внутри основной. То есть необходимость в выборе администратором тех библиотечных объектов, которые будут подходящими для конкретных объектов основной сущности и будут даваться пользователю для выбора в основной сущности. Для этого необходимо предусмотреть специальный экран, на котором администратором будет осуществляться подобный выбор и сущность для хранения информации о соответствии.
+</p>
+</details>
+<details>
+<summary>Вариант решения</summary>
+<p>
+  <details>
+  <summary>Вариант решения</summary>
+  <p>
+
+  </p>
+  </details>
+
 </p>
 </details>
