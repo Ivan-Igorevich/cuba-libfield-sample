@@ -224,12 +224,17 @@
        field.setNullOptionVisible(false);
    return field;
    ```
-   - Поскольку заполнение компонента значениями должно происходить гарантированно после формирования экрана и источников данных - можно сделать это в самом позднем из вызываемых при инициализации методов
+   - Поскольку заполнение компонента значениями должно происходить гарантированно после формирования экрана и источников данных - можно сделать это в самом позднем из вызываемых при инициализации методов. Но при этом важно учесть, что если экран редактирования открылся для создания нового экземпляра настроек - следует проигнорировать обновление источника данных и наполнение выпадающего меню. Это может быть сделано при помощи создания флажка, устанавливающегося в `true` когда контроллер попал в метод `@Override protected void initNewItem()`. 
 
    ``` java
-   @Override
-   public void ready() {
+   private boolean isNew;
+   @Override protected void initNewItem(ValueHolder item) {
+       super.initNewItem(item);
+       isNew = true;
+   }
+   @Override public void ready() {
        super.ready();
+       if (isNew) return;
        valueHolderDs.refresh();
        libEntitiesDs.refresh(ParamsMap.of("name", valueHolderDs.getItem().getName()));
        Map<String, String> map = new LinkedHashMap<>();
@@ -249,16 +254,15 @@
 <p>
  <details> <summary>&emsp; Сущность для хранения настроек</summary>
  <p>
-  Для хранения необходимо предусмотреть персистентную сущность наподобие `Map<K, List<V>>`, где ключом будет название основной сущности, содержащей в себе список из возможных принимаемых значений.
+  Для хранения необходимо предусмотреть персистентную сущность наподобие `Map<K, List<V>>`, где ключом будет идентификатор основной сущности, содержащей в себе список из возможных принимаемых значений. Очевидным ограничением подобной сущности является возомжность привязки только к одной сущности одного приложения и необходимость модифицировать связь с основной (ключевой) сущностью под каждую задачу.
 
   ``` java
-  @NamePattern("%s|entity")
-  @Table(name = "LIBFIELDSAMPLE_SETTINGS")
-  @Entity(name = "libfieldsample$Settings")
-  public class Settings extends StandardEntity {
-      @Column(name = "ENTITY", unique = true) protected String entity;
-      @JoinTable(name = "LIBFIELDSAMPLE_SETTINGS_LIB_ENTITY_LINK",
-          joinColumns = @JoinColumn(name = "SETTINGS_ID"),
+  public class UidValSettings extends StandardEntity {
+      @OneToOne(fetch = FetchType.LAZY)
+      @JoinColumn(name = "ENTITY_ID", unique = true) protected ValueHolder entity;
+
+      @JoinTable(name = "LIBFIELDSAMPLE_ID_VAL_SETTINGS_LIB_ENTITY_LINK",
+          joinColumns = @JoinColumn(name = "ID_VAL_SETTINGS_ID"),
           inverseJoinColumns = @JoinColumn(name = "LIB_ENTITY_ID"))
       @ManyToMany protected List<LibEntity> possible;
   ```
@@ -269,65 +273,7 @@
 
  <details> <summary>&emsp; Экран настроек</summary>
  <p>
-  <details> <summary>&emsp; &emsp; Дескриптор</summary>
-  <p>
-   На экране настроек следует учесть, что при выборе основной сущности (ключа настройки) нельзя давать пользователю возможности ошибиться, или опечататься. Такоим образом, возникает необходимость в генерировании компонента с выпадающим меню, вместо простого текстового поля со свободным вводом. Для этого необходимо предусмотреть наличие источника данных для выпадающего меню
-
-   ```xml
-   <dsContext>
-   <datasource id="settingsDs"
-               class="ru.iovchinnikov.libfieldsample.entity.Settings"
-               view="settings-view">
-       <collectionDatasource id="possibleDs"
-                               property="possible"/>
-   </datasource>
-   <collectionDatasource id="holdersDs"
-                           class="ru.iovchinnikov.libfieldsample.entity.ValueHolder"
-                           view="valueHolder-view">
-       <query>
-           <![CDATA[select e from libfieldsample$ValueHolder e]]>
-       </query>
-   </collectionDatasource>
-   </dsContext>
-   ```
-   и, собственно, компонента с выпадающим меню
-
-   ``` xml
-   <fieldGroup id="fieldGroup"
-           datasource="settingsDs">
-   <column width="250px">
-       <field property="entity"
-               custom="true"
-               generator="entityGen"/>
-   </column>
-   </fieldGroup>
-   ```
-   Который в этом случае потребует описания метода генерации компонента в контроллере.
-  </p>
-  </details>
-
-  <details> <summary>&emsp; &emsp; Контроллер</summary>
-  <p>
-   При создании компонента важно учесть, что на момент создания источники данных ещё не будут загружены, поэтому потребуется ручное обновление. И, поскольку поле с названием основной сущности строковое - необходимо выполнить преобразование из сущностей в источнике данных в строки `holdersDs.getItems().forEach(holder -> map.put(holder.getName(), holder.getName()));`. Полный код генератора может выглядеть как в примере:
-
-   ``` java
-   @Inject private ComponentsFactory componentsFactory;
-   @Inject private Datasource<Settings> settingsDs;
-   @Inject private CollectionDatasource<ValueHolder, UUID> holdersDs;
-
-   public Component entityGen(Datasource datasource, String fieldId) {
-       LookupField field = componentsFactory.createComponent(LookupField.class);
-       field.setDatasource(settingsDs, "entity");
-       holdersDs.refresh();
-       Map<String, String> map = new LinkedHashMap<>();
-       holdersDs.getItems().forEach(holder -> map.put(holder.getName(), holder.getName()));
-       field.setOptionsMap(map);
-       field.setNullOptionVisible(false);
-       return field;
-   }
-   ```
-  </p>
-  </details>
+  Может быть использован стандартный и не требует изменений
  </p>
  </details>
 
@@ -346,9 +292,9 @@
                            class="ru.iovchinnikov.libfieldsample.entity.LibEntity"
                            view="libEntity-view">
        <query>
-           <![CDATA[select p from libfieldsample$Settings s
-                       join s.possible p
-                       where s.entity = :custom$name]]>
+            <![CDATA[select p from libfieldsample$UidValSettings s
+                    join s.possible p
+                    where s.entity.id = :ds$valueHolderDs]]>
        </query>
    </collectionDatasource>
    </dsContext>
@@ -363,13 +309,13 @@
        </column>
    </fieldGroup>
    ```
-   Таким образом, в источнике данных будет произведена фильтрация библиотечных объектов по правилам, заданным в настройках и наименованию основного объекта, открываемого на экране, и переданного с контроллера в виде `custom` параметра (то есть данный пример также демонстрирует передачу параметров с контроллера в дескриптор).
+   Таким образом, в источнике данных будет произведена фильтрация библиотечных объектов по правилам, заданным в настройках и идентификатору основного объекта, открываемого на экране, и переданного с контроллера в виде `ds` параметра (то есть данный пример также демонстрирует использование ранее созданных источников данных в дескрипторе).
   </p>
   </details>
 
   <details> <summary>&emsp; &emsp; Контроллер</summary>
   <p>
-   В связи с тем, что формирование источника данных будет происходить при инициализации экрана, а метод генерации компонента будет вызван до этого, необходимо разделить действие по генерированию компонента на два - собственно генерация компонента, и наполнение выпадающего списка данными. Для упрощения работы с генерируемым компонентом необходимо выделить его идентификатор в поле класса, таким образом он станет доступен как методу генерации, так и методу, содержащему наполняющий его код.
+   В связи с тем, что формирование источника данных будет происходить при инициализации экрана, а метод генерации компонента будет вызван до этого, необходимо разделить действие по генерированию компонента на два: собственно генерация компонента, и наполнение выпадающего списка данными. Для упрощения работы с генерируемым компонентом необходимо выделить его идентификатор в поле класса, таким образом он станет доступен ак методу генерации, так и методу, содержащему наполняющий его код.
    - Генерация компонента будет происходить в методе, вызываемом дескриптором
 
    ``` java
@@ -379,20 +325,22 @@
        field.setNullOptionVisible(false);
    return field;
    ```
-   - Поскольку заполнение компонента значениями должно происходить гарантированно после формирования экрана и источников данных - можно сделать это в самом позднем из вызываемых при инициализации методов
-    
+   - Поскольку заполнение компонента значениями должно происходить гарантированно после формирования экрана и источников данных - можно сделать это в самом позднем из вызываемых при инициализации методов. Но при этом важно учесть, что если экран редактирования открылся для создания нового экземпляра настроек - следует проигнорировать обновление источника данных и наполнение выпадающего меню. Это может быть сделано при помощи создания флажка, устанавливающегося в `true` когда контроллер попал в метод `@Override protected void initNewItem()`. 
+
    ``` java
-   @Override
-   public void ready() {
+   private boolean isNew;
+   @Override protected void initNewItem(ValueHolder item) {
+       super.initNewItem(item);
+       isNew = true;
+   }
+   @Override public void ready() {
        super.ready();
+       if (isNew) return;
        valueHolderDs.refresh();
-       libEntitiesDs.refresh(ParamsMap.of("name", valueHolderDs.getItem().getName()));
-       Map<String, String> map = new LinkedHashMap<>();
-       libEntitiesDs.getItems().forEach(libEntity -> map.put(libEntity.getName(), libEntity.getName()));
-       field.setOptionsMap(map);
+        libEntitiesDs.refresh();
+        field.setOptionsDatasource(libEntitiesDs);
    }
    ```
-   Здесь следует обратить внимание на обновление источника данных и передачу ему параметра под названием `name`, а также преобразование списка сущностей в список из строк.
   </p>
   </details>
  </p>
