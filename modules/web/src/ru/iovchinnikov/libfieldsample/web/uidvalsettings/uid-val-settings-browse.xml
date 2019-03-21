@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="msg://browseCaption"
+        class="ru.iovchinnikov.libfieldsample.web.uidvalsettings.UidValSettingsBrowse"
+        focusComponent="uidValSettingsesTable"
+        lookupComponent="uidValSettingsesTable"
+        messagesPack="ru.iovchinnikov.libfieldsample.web.uidvalsettings">
+    <dsContext>
+        <groupDatasource id="uidValSettingsesDs"
+                         class="ru.iovchinnikov.libfieldsample.entity.UidValSettings"
+                         view="uidValSettings-view">
+            <query>
+                <![CDATA[select e from libfieldsample$UidValSettings e]]>
+            </query>
+        </groupDatasource>
+    </dsContext>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="uidValSettingsesTable"
+            spacing="true">
+        <filter id="filter"
+                applyTo="uidValSettingsesTable"
+                datasource="uidValSettingsesDs">
+            <properties include=".*"/>
+        </filter>
+        <groupTable id="uidValSettingsesTable"
+                    width="100%">
+            <actions>
+                <action id="create"/>
+                <action id="edit"/>
+                <action id="remove"/>
+            </actions>
+            <columns>
+                <column id="entity"/>
+            </columns>
+            <rows datasource="uidValSettingsesDs"/>
+            <rowsCount/>
+            <buttonsPanel id="buttonsPanel"
+                          alwaysVisible="true">
+                <button id="createBtn"
+                        action="uidValSettingsesTable.create"/>
+                <button id="editBtn"
+                        action="uidValSettingsesTable.edit"/>
+                <button id="removeBtn"
+                        action="uidValSettingsesTable.remove"/>
+            </buttonsPanel>
+        </groupTable>
+    </layout>
+</window>

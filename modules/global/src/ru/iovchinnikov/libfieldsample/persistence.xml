@@ -5,8 +5,7 @@
                       transaction-type="RESOURCE_LOCAL">
         <class>ru.iovchinnikov.libfieldsample.entity.LibEntity</class>
         <class>ru.iovchinnikov.libfieldsample.entity.ValueHolder</class>
-        <class>ru.iovchinnikov.libfieldsample.entity.FixedValueHolder</class>
-        <class>ru.iovchinnikov.libfieldsample.entity.LibrarySettings</class>
         <class>ru.iovchinnikov.libfieldsample.entity.Settings</class>
+        <class>ru.iovchinnikov.libfieldsample.entity.UidValSettings</class>
     </persistence-unit>
 </persistence>

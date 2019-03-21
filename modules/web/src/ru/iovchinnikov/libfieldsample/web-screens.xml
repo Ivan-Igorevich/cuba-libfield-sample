@@ -12,4 +12,8 @@
             template="ru/iovchinnikov/libfieldsample/web/settings/settings-browse.xml"/>
     <screen id="libfieldsample$Settings.edit"
             template="ru/iovchinnikov/libfieldsample/web/settings/settings-edit.xml"/>
+    <screen id="libfieldsample$UidValSettings.browse"
+            template="ru/iovchinnikov/libfieldsample/web/uidvalsettings/uid-val-settings-browse.xml"/>
+    <screen id="libfieldsample$UidValSettings.edit"
+            template="ru/iovchinnikov/libfieldsample/web/uidvalsettings/uid-val-settings-edit.xml"/>
 </screen-config>

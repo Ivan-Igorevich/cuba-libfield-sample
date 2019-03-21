@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<window xmlns="http://schemas.haulmont.com/cuba/window.xsd"
+        caption="msg://editorCaption"
+        class="ru.iovchinnikov.libfieldsample.web.uidvalsettings.UidValSettingsEdit"
+        datasource="uidValSettingsDs"
+        focusComponent="fieldGroup"
+        messagesPack="ru.iovchinnikov.libfieldsample.web.uidvalsettings">
+    <dsContext>
+        <datasource id="uidValSettingsDs"
+                    class="ru.iovchinnikov.libfieldsample.entity.UidValSettings"
+                    view="uidValSettings-view">
+            <collectionDatasource id="possibleDs"
+                                  property="possible"/>
+        </datasource>
+    </dsContext>
+    <dialogMode height="600"
+                width="800"/>
+    <layout expand="windowActions"
+            spacing="true">
+        <fieldGroup id="fieldGroup"
+                    datasource="uidValSettingsDs">
+            <column width="250px">
+                <field property="entity"/>
+            </column>
+        </fieldGroup>
+        <groupBox id="possibleBox"
+                  caption="msg://ru.iovchinnikov.libfieldsample.entity/UidValSettings.possible">
+            <table id="possibleTable"
+                   height="200px"
+                   width="100%">
+                <actions>
+                    <action id="add"/>
+                    <action id="remove"/>
+                </actions>
+                <columns>
+                    <column id="name"/>
+                </columns>
+                <rows datasource="possibleDs"/>
+                <buttonsPanel>
+                    <button action="possibleTable.add"/>
+                    <button action="possibleTable.remove"/>
+                </buttonsPanel>
+            </table>
+        </groupBox>
+        <frame id="windowActions"
+               screen="editWindowActions"/>
+    </layout>
+</window>

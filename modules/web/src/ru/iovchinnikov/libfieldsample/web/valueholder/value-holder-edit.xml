@@ -12,10 +12,15 @@
         <collectionDatasource id="libEntitiesDs"
                               class="ru.iovchinnikov.libfieldsample.entity.LibEntity"
                               view="libEntity-view">
+            <!--<query>-->
+                <!--<![CDATA[select p from libfieldsample$Settings s-->
+                            <!--join s.possible p-->
+                            <!--where s.entity = :custom$name]]>-->
+            <!--</query>-->
             <query>
-                <![CDATA[select p from libfieldsample$Settings s
+                    <![CDATA[select p from libfieldsample$UidValSettings s
                             join s.possible p
-                            where s.entity = :custom$name]]>
+                            where s.entity.id = :ds$valueHolderDs]]>
             </query>
         </collectionDatasource>
     </dsContext>

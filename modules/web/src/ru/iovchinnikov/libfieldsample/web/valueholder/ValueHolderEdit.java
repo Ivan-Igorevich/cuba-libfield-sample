@@ -39,13 +39,13 @@ public class ValueHolderEdit extends AbstractEditor<ValueHolder> {
         field.setDatasource(valueHolderDs, "libValue");
         field.setNullOptionVisible(false);
 
-        field.setNewOptionAllowed(true);
-        field.setNewOptionHandler(caption -> {
-            LibEntity e = metadata.create(LibEntity.class);
-            e.setName(caption);
-            dataManager.commit(e);
-            field.setValue(e.getName());
-        });
+//        field.setNewOptionAllowed(true);
+//        field.setNewOptionHandler(caption -> {
+//            LibEntity e = metadata.create(LibEntity.class);
+//            e.setName(caption);
+//            dataManager.commit(e);
+//            field.setValue(e.getName());
+//        });
         return field;
     }
 
@@ -54,9 +54,12 @@ public class ValueHolderEdit extends AbstractEditor<ValueHolder> {
         super.ready();
         if (isNew) return;
         valueHolderDs.refresh();
-        libEntitiesDs.refresh(ParamsMap.of("name", valueHolderDs.getItem().getName()));
+//        libEntitiesDs.refresh(ParamsMap.of("name", valueHolderDs.getItem().getName()));
+//        libEntitiesDs.refresh(ParamsMap.of("name", valueHolderDs.getItem()));
+        libEntitiesDs.refresh();
         Map<String, String> map = new LinkedHashMap<>();
-        libEntitiesDs.getItems().forEach(libEntity -> map.put(libEntity.getName(), libEntity.getName()));
-        field.setOptionsMap(map);
+//        libEntitiesDs.getItems().forEach(libEntity -> map.put(libEntity.getName(), libEntity.getName()));
+//        field.setOptionsMap(map);
+        field.setOptionsDatasource(libEntitiesDs);
     }
 }
